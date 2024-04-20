@@ -33,6 +33,8 @@
     4) Only one valid answer exists. 
 */
 
+using System.Collections.Immutable;
+
 static int[] TwoSum(int[] nums, int target)
 {
     List<int> result = new List<int>();
@@ -166,6 +168,125 @@ Console.WriteLine();
 #endregion
 
 
+#region 35. Search Insert Position (Binary Search) [Not Solved]
+/*
+- Given a sorted array of distinct integers and a target value, return the index if the target is found. 
+    If not, return the index where it would be if it were inserted in order.
+
+- You must write an algorithm with O(log n) runtime complexity.
+
+- Example 1:
+    Input: nums = [1,3,5,6], target = 5
+    Output: 2
+
+- Example 2:
+    Input: nums = [1,3,5,6], target = 2
+    Output: 1
+
+- Example 3:
+    Input: nums = [1,3,5,6], target = 7
+    Output: 4
+ 
+
+- Constraints:
+    1) 1 <= nums.length <= 10^4
+    2) -10^4 <= nums[i] <= 10^4
+    3) nums contains distinct values sorted in ascending order.
+    4) -10^4 <= target <= 10^4 
+*/
+
+static int SearchInsert(int[] nums, int target)
+{
+    int lowerBound = 0; //first element
+    int upperBound = nums.Length - 1; //last element
+    int valueAtMidPoint = 0;
+    int result = 0;
+
+    if (!nums.Contains(target))
+    {
+        while (lowerBound < upperBound)
+        {
+            var midPoint = (lowerBound + upperBound) / 2;
+            valueAtMidPoint = nums[midPoint];
+
+            if (target < valueAtMidPoint)
+                upperBound = midPoint - 1;
+            else if (target > valueAtMidPoint)
+                lowerBound = midPoint + 1;
+        }
+
+        if (lowerBound == upperBound)
+        {
+            if (target < valueAtMidPoint)
+            {
+                nums.Append(target);
+            }
+
+        }
+    }
+    if (nums.Contains(target))
+    {
+        while (lowerBound <= upperBound)
+        {
+            var midPoint = (lowerBound + upperBound) / 2;
+            valueAtMidPoint = nums[midPoint];
+
+            if (target == valueAtMidPoint)
+            {
+                result = midPoint;
+                break;
+            }
+            else if (target < valueAtMidPoint)
+                upperBound = midPoint - 1;
+            else if (target > valueAtMidPoint)
+                lowerBound = midPoint + 1;
+        }
+
+        return result;
+    }
+
+    else
+        return -1;
+}
+
+
+#endregion
+
+
+#region 49. Group Anagrams [waiting...]
+/*
+- Given an array of strings strs, group the anagrams together. You can return the answer in any order.
+
+- An Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, 
+    typically using all the original letters exactly once.
+
+ 
+
+- Example 1:
+    Input: strs = ["eat","tea","tan","ate","nat","bat"]
+    Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
+
+- Example 2:
+    Input: strs = [""]
+    Output: [[""]]
+
+- Example 3:
+    Input: strs = ["a"]
+    Output: [["a"]]
+
+- Constraints:
+    1 <= strs.length <= 10^4
+    0 <= strs[i].length <= 100
+    strs[i] consists of lowercase English letters.
+*/
+
+//static IList<IList<string>> GroupAnagrams(string[] strs)
+//{
+
+//}
+#endregion
+
+
 #region 217. Contains Duplicate (HashTable/Dictionary) 
 /*
 * Given an integer array nums, 
@@ -293,6 +414,224 @@ string s1 = "aaccd";
 string s2 = "cddac";
 Console.WriteLine("Valid Anagram ? : " + IsAnagram(s1,s2)); //false
 Console.WriteLine();
+
+#endregion
+
+
+#region 347. Top K Frequent Elements
+/*
+- Given an integer array nums and an integer k, return the k most frequent elements. 
+    You may return the answer in any order.
+
+- Example 1:
+    Input: nums = [1,1,1,2,2,3], k = 2
+    Output: [1,2]
+
+- Example 2:
+    Input: nums = [1], k = 1
+    Output: [1]
+ 
+- Constraints:
+    1 <= nums.length <= 10^5
+    -10^4 <= nums[i] <= 10^4
+    k is in the range [1, the number of unique elements in the array].
+    It is guaranteed that the answer is unique.
+ 
+- Follow up: Your algorithm's time complexity must be better than O(n log n), where n is the array's size. 
+*/
+
+static int[] TopKFrequent(int[] nums, int k)
+{
+    HashSet<int> results = new HashSet<int>();
+    Dictionary<int, int> values = new Dictionary<int, int>();
+    for (int i = 0; i < nums.Length; i++)
+    {
+        if (values.ContainsKey(nums[i]))
+        {
+            values[nums[i]]++;
+        }
+        else
+            values.Add(nums[i], 1);
+    }
+
+    var orderedValues = values.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+    int count = 0;
+    while (count < k)
+    {
+        results.Add(orderedValues.Keys.FirstOrDefault());
+        orderedValues.Remove(orderedValues.Keys.FirstOrDefault());
+        count++;
+    }
+ 
+    return results.ToArray();
+}
+
+int[] num1 = { 1, 1, 1, 2, 2, 3 };
+int k1 = 2;
+Console.WriteLine("Top K Frequent: " + "[" + string.Join(",", TopKFrequent(num1, k1)) + "]"); // [1,2]
+
+
+int[] num2 = {1};
+int k2 = 1;
+Console.WriteLine("Top K Frequent: " + "[" + string.Join(",", TopKFrequent(num2, k2)) + "]"); // [1]
+
+int[] num3 = { 1, 2 };
+int k3 = 2;
+Console.WriteLine("Top K Frequent: " + "[" + string.Join(",", TopKFrequent(num3, k3)) + "]"); // [1,2]
+
+int[] num4 = { 3, 0, 1, 0 };
+int k4 = 1;
+Console.WriteLine("Top K Frequent: " + "[" + string.Join(",", TopKFrequent(num4, k4)) + "]"); // [0]
+
+Console.WriteLine();
+#endregion
+
+
+#region 392. Is Subsequence [Not Solved]
+/*
+- Given two strings s and t, return true if s is a subsequence of t, or false otherwise.
+
+- A subsequence of a string is a new string that is formed from the original string by
+    deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters.
+        (i.e., "ace" is a subsequence of "abcde" while "aec" is not).
+
+ 
+
+- Example 1:
+    Input: s = "abc", t = "ahbgdc"
+    Output: true
+
+- Example 2:
+    Input: s = "axc", t = "ahbgdc"
+    Output: false
+ 
+
+- Constraints:
+    0 <= s.length <= 100
+    0 <= t.length <= 10^4
+    s and t consist only of lowercase English letters.
+ 
+
+- Follow up: 
+    Suppose there are lots of incoming s, say s1, s2, ..., sk where k >= 10^9, 
+        and you want to check one by one to see if t has its subsequence. 
+            In this scenario, how would you change your code?
+*/
+
+static bool IsSubsequence(string s, string t)
+{
+    Dictionary<char, int> keyValuePairs = new Dictionary<char, int>();
+    Stack<int> checkKeys = new Stack<int>();
+    for (int i = 0; i < t.Length; i++)
+    {
+        keyValuePairs.Add(t[i], i + 1);
+    }
+    for (int i = 0; i < s.Length; i++)
+    {
+        if (keyValuePairs.ContainsKey(s[i]))
+        {
+            if (checkKeys.Count > 0)
+            {
+                if (checkKeys.Peek() > keyValuePairs[s[i]])
+                {
+                    return false;
+                }
+                else
+                    checkKeys.Push(keyValuePairs[s[i]]);
+            }
+            else
+                checkKeys.Push(keyValuePairs[s[i]]);
+        }
+        else
+            return false;
+    }
+
+    return true;
+}
+
+string st1 = "ace";
+string st2 = "aec";
+string t1 = "abcde";
+
+Console.WriteLine("Is Subsequence: " + IsSubsequence(st2, t1)); //false
+Console.WriteLine("Is Subsequence: " + IsSubsequence(st1, t1)); //true
+
+
+string st3 = "axc";
+string t2 = "ahbgdc";
+
+Console.WriteLine("Is Subsequence: " + IsSubsequence(st3, t2)); //false
+
+//string st4 = "aaaaaa";
+//string t3 = "bbaaaa";
+
+//Console.WriteLine("Is Subsequence: " + IsSubsequence(st4, t3)); //false
+Console.WriteLine();
+#endregion
+
+
+#region 704. Binary Search
+/*
+- Given an array of integers nums which is sorted in ascending order, and an integer target, 
+    write a function to search target in nums. If target exists, then return its index. Otherwise, return -1.
+
+- You must write an algorithm with O(log n) runtime complexity. 
+
+Example 1:
+    Input: nums = [-1,0,3,5,9,12], target = 9
+    Output: 4
+    Explanation: 9 exists in nums and its index is 4
+
+- Example 2:
+    Input: nums = [-1,0,3,5,9,12], target = 2
+    Output: -1
+    Explanation: 2 does not exist in nums so return -1
+ 
+
+- Constraints:
+
+    1) 1 <= nums.length <= 10^4
+    2) -10^4 < nums[i], target < 10^4
+    3) All the integers in nums are unique.
+    4) nums is sorted in ascending order.
+*/
+
+static int Search(int[] nums, int target)
+{
+    int lowerBound = 0; //first element
+    int upperBound = nums.Length - 1; //last element
+    int result = 0;
+
+    if (nums.Contains(target))
+    {
+        while (lowerBound <= upperBound)
+        {
+            var midPoint = (lowerBound + upperBound) / 2;
+            var valueAtMidPoint = nums[midPoint];
+
+            if (target == valueAtMidPoint)
+            {
+                result = midPoint;
+                break;
+            }
+            else if (target < valueAtMidPoint)
+                upperBound = midPoint - 1;
+            else if (target > valueAtMidPoint)
+                lowerBound = midPoint + 1;
+        }
+
+        return result;
+    }
+
+    else 
+        return -1;
+
+}
+
+int[] inputArray = { -1, 0, 3, 5, 9, 12 };
+Console.WriteLine("Binary Search: " + Search(inputArray, 9)); //4
+Console.WriteLine("Binary Search: " + Search(inputArray, 2)); //-1
 
 #endregion
 
