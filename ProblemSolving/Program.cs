@@ -34,6 +34,7 @@
 */
 
 using System.Collections.Immutable;
+using System.Linq;
 
 static int[] TwoSum(int[] nums, int target)
 {
@@ -168,7 +169,7 @@ Console.WriteLine();
 #endregion
 
 
-#region 35. Search Insert Position (Binary Search) [Not Solved]
+#region 35. Search Insert Position (Binary Search) [Not Solved...]
 /*
 - Given a sorted array of distinct integers and a target value, return the index if the target is found. 
     If not, return the index where it would be if it were inserted in order.
@@ -253,7 +254,7 @@ static int SearchInsert(int[] nums, int target)
 #endregion
 
 
-#region 49. Group Anagrams [waiting...]
+#region 49. Group Anagrams [Not Solved...]
 /*
 - Given an array of strings strs, group the anagrams together. You can return the answer in any order.
 
@@ -282,8 +283,16 @@ static int SearchInsert(int[] nums, int target)
 
 //static IList<IList<string>> GroupAnagrams(string[] strs)
 //{
+//    List<List<string>> outputStrings = new List<List<string>>();
+//    Stack<char> stack = new Stack<char>();
 
+
+//    return outputStrings;
 //}
+
+//string[] strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
+//Console.WriteLine("Group Anagrams: " + GroupAnagrams(strs)); //[["bat"],["nat","tan"],["ate","eat","tea"]]
+//Console.WriteLine();
 #endregion
 
 
@@ -338,7 +347,42 @@ Console.WriteLine();
 #endregion
 
 
-#region 242. Valid Anagram (HashTable/Dictionary) [Not Solved]
+#region 238. Product of Array Except Self [waiting...]
+/*
+- Given an integer array nums, return an array answer such that answer[i] 
+    is equal to the product of all the elements of nums except nums[i].
+
+- The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+
+- You must write an algorithm that runs in O(n) time and without using the division operation.
+
+
+- Example 1:
+    Input: nums = [1,2,3,4]
+    Output: [24,12,8,6]
+
+- Example 2:
+    Input: nums = [-1,1,0,-3,3]
+    Output: [0,0,9,0,0]
+
+- Constraints:
+    2 <= nums.length <= 10^5
+    -30 <= nums[i] <= 30
+    The product of any prefix or suffix of nums is guaranteed to fit in a 32-bit integer.
+
+- Follow up: Can you solve the problem in O(1) extra space complexity? 
+    (The output array does not count as extra space for space complexity analysis.)
+*/
+
+//static int[] ProductExceptSelf(int[] nums)
+//{
+
+//}
+
+#endregion
+
+
+#region 242. Valid Anagram (HashTable/Dictionary)
 /*
 - Given two strings s and t, return true if t is an anagram of s, and false otherwise.
 - An Anagram : is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
@@ -358,51 +402,15 @@ Console.WriteLine();
 
 static bool IsAnagram(string s, string t)
 {
-    string sWord = s.ToLower();
-    string tWord = t.ToLower();
-    Dictionary<char, int> sPairs = new Dictionary<char, int>();
-    Dictionary<char, int> tPairs = new Dictionary<char, int>();
-    bool foundMatch = false;
+    var sWord = s.ToCharArray();
+    var tWord = t.ToCharArray();
 
+    Array.Sort(sWord);
+    Array.Sort(tWord);
 
-	if (sWord.Length == tWord.Length && 1 <= sWord.Length && tWord.Length <= 5 * (10^4))
-	{
-        for (int i = 0; i < sWord.Length; i++)
-        {
-            if (!sPairs.ContainsKey(sWord[i]))
-                sPairs.Add(sWord[i], 1);
-            else
-                sPairs[sWord[i]] += 1;
-        }
-
-        for (int i = 0; i < tWord.Length; i++)
-        {
-            if (!tPairs.ContainsKey(tWord[i]))
-                tPairs.Add(tWord[i], 1);
-            else
-                tPairs[tWord[i]] += 1;
-
-            
-            if (sPairs.ContainsKey(tWord[i]))
-            {
-                if (sPairs[tWord[i]] == tPairs[tWord[i]])
-                {
-                    foundMatch = true;
-                }
-                else
-                {
-                    foundMatch = false;
-                }
-            }
-            else
-            {
-                foundMatch = false;
-                break;
-            }
-
-        }
-
-        return foundMatch;
+    if (sWord.Length == tWord.Length)
+    {
+        return sWord.SequenceEqual(tWord);
     }
 
     return false;
@@ -411,14 +419,18 @@ static bool IsAnagram(string s, string t)
 
 
 string s1 = "aaccd";
-string s2 = "cddac";
-Console.WriteLine("Valid Anagram ? : " + IsAnagram(s1,s2)); //false
+string w1 = "cddac";
+Console.WriteLine("Valid Anagram ? : " + IsAnagram(s1,w1)); //false
+                                                            
+string s2 = "anagram";
+string w2 = "nagaram";
+Console.WriteLine("Valid Anagram ? : " + IsAnagram(s2,w2)); //false
 Console.WriteLine();
 
 #endregion
 
 
-#region 347. Top K Frequent Elements
+#region 347. Top K Frequent Elements [Dictionary + HashSet]
 /*
 - Given an integer array nums and an integer k, return the k most frequent elements. 
     You may return the answer in any order.
@@ -571,6 +583,65 @@ Console.WriteLine();
 #endregion
 
 
+#region 560. Subarray Sum Equals K
+/*
+- Given an array of integers nums and an integer k, return the total number of subarrays whose sum equals to k.
+
+- A subarray is a contiguous non-empty sequence of elements within an array.
+
+ 
+
+- Example 1:
+    Input: nums = [1,1,1], k = 2
+    Output: 2
+
+- Example 2:
+    Input: nums = [1,2,3], k = 3
+    Output: 2
+ 
+- Constraints:
+    1 <= nums.length <= 2 * 10^4
+    -1000 <= nums[i] <= 1000
+    -10^7 <= k <= 10^7 
+*/
+
+static int SubarraySum(int[] nums, int k)
+{
+    int count = 0;
+
+    for (int i = 0; i < nums.Length; i++)
+    {
+        int sum = nums[i];
+        if (sum == k)
+            count++;
+
+        for (int j = i+1; j < nums.Length; j++)
+        {
+            sum += nums[j];
+            if (sum == k)
+                count++;
+        }
+    }
+
+    return count;
+}
+
+int[] numb1 = {1, 1, 1};
+int[] numb2 = {1, 2, 3};
+int[] numb3 = {1, -1, 0};
+int[] numb4 = {1};
+int[] numb5 = {100,1,2,3,4};
+int[] numb6 = { 0, 0 };
+Console.WriteLine("Subarray Sum: " + SubarraySum(numb1, 2)); //2
+Console.WriteLine("Subarray Sum: " + SubarraySum(numb2, 3)); //2
+Console.WriteLine("Subarray Sum: " + SubarraySum(numb3, 0)); //3
+Console.WriteLine("Subarray Sum: " + SubarraySum(numb4, 1)); //1
+Console.WriteLine("Subarray Sum: " + SubarraySum(numb5, 6)); //1
+Console.WriteLine("Subarray Sum: " + SubarraySum(numb6, 0)); //3
+Console.WriteLine();
+#endregion
+
+
 #region 704. Binary Search
 /*
 - Given an array of integers nums which is sorted in ascending order, and an integer target, 
@@ -664,4 +735,140 @@ Console.WriteLine("String without stars '*' : " + RemoveStars(starString));
 Console.WriteLine();
 
 #endregion
+
+
+#region 3120. Count the Number of Special Characters I
+/*
+- You are given a string word. A letter is called special if it appears both in lowercase and uppercase in word.
+- Return the number of special letters in word.
+
+- Example 1:
+    Input: word = "aaAbcBC"
+    Output: 3
+    Explanation:
+    The special characters in word are 'a', 'b', and 'c'.
+
+- Example 2:
+    Input: word = "abc"
+    Output: 0
+    Explanation:
+    No character in word appears in uppercase.
+
+- Example 3:
+    Input: word = "abBCab"
+    Output: 1
+    Explanation:
+    The only special character in word is 'b'.
+
+- Constraints:
+    1 <= word.length <= 50
+    word consists of only lowercase and uppercase English letters. 
+*/
+
+static int NumberOfSpecialChars(string word)
+{
+    HashSet<char> result = new HashSet<char>();
+    Dictionary<char,int> valuePairs = new Dictionary<char,int>();
+    int count = 0;
+
+    for (int i = 0; i < word.Length; i++)
+    {
+        result.Add(word[i]);
+    }
+
+    foreach (var item in result)
+    {
+        if (!valuePairs.ContainsKey(char.ToLower(item)))
+            valuePairs.Add(char.ToLower(item), 1);
+        else
+            valuePairs[char.ToLower(item)]++;
+    }
+
+    foreach (var item in valuePairs)
+    {
+        if (item.Value > 1)
+            count++;
+    }
+
+    return count;
+}
+
+string word1 = "aaAbcBC";
+string word2 = "Cc";
+Console.WriteLine("Number Of Special Chars: " + NumberOfSpecialChars(word1)); //3
+Console.WriteLine("Number Of Special Chars: " + NumberOfSpecialChars(word2)); //1
+#endregion
+
+
+#region 3121. Count the Number of Special Characters II
+/*
+- You are given a string word. A letter c is called special if it appears both in lowercase and uppercase in word,
+    and every lowercase occurrence of c appears before the first uppercase occurrence of c.
+
+- Return the number of special letters in word.
+
+- Example 1:
+    Input: word = "aaAbcBC"
+    Output: 3
+    Explanation:
+    The special characters are 'a', 'b', and 'c'.
+    
+- Example 2:
+    Input: word = "abc"
+    Output: 0
+    Explanation:
+    There are no special characters in word.
+
+- Example 3:
+    Input: word = "AbBCab"
+    Output: 0
+    Explanation:
+    There are no special characters in word.
+
+Constraints:
+
+1 <= word.length <= 2 * 105
+word consists of only lowercase and uppercase English letters. 
+*/
+
+static int NumberOfSpecialCharsII(string word)
+{
+    Dictionary<char, int> uppercaseLetters = new Dictionary<char, int>();
+    Dictionary<char, int> lowercaseLetters = new Dictionary<char, int>();
+    int count = 0;
+
+    for (int i = 0; i < word.Length; i++) 
+    {
+        if (char.IsUpper(word[i]) && !uppercaseLetters.ContainsKey(word[i]))
+        {
+            uppercaseLetters.Add(word[i], i);
+        }
+
+        if (char.IsLower(word[i]))
+        {
+            if (!lowercaseLetters.ContainsKey(word[i]))
+                lowercaseLetters.Add(word[i], i);
+            else
+                lowercaseLetters[word[i]] = i;
+        }
+    }
+
+    foreach (var item in lowercaseLetters)
+    {
+        if (uppercaseLetters.ContainsKey(char.ToUpper(item.Key)))
+        {
+            if (uppercaseLetters[char.ToUpper(item.Key)] > lowercaseLetters[item.Key])
+            {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
+
+string wo1 = "AbBCab";
+Console.WriteLine("Number Of Special Chars II: " + NumberOfSpecialCharsII(wo1)); //0
+#endregion
+
 
