@@ -35,6 +35,7 @@
 
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text;
 
 static int[] TwoSum(int[] nums, int target)
 {
@@ -296,6 +297,137 @@ static int SearchInsert(int[] nums, int target)
 #endregion
 
 
+#region 125. Valid Palindrome (Two Pointers)
+/*
+- A phrase is a palindrome if, after converting all uppercase letters into lowercase letters 
+    and removing all non-alphanumeric characters, it reads the same forward and backward. 
+        Alphanumeric characters include letters and numbers.
+
+- Given a string s, return true if it is a palindrome, or false otherwise.
+
+- Example 1:
+    Input: s = "A man, a plan, a canal: Panama"
+    Output: true
+    Explanation: "amanaplanacanalpanama" is a palindrome.
+
+- Example 2:
+    Input: s = "race a car"
+    Output: false
+    Explanation: "raceacar" is not a palindrome.
+
+- Example 3:
+    Input: s = " "
+    Output: true
+    Explanation: s is an empty string "" after removing non-alphanumeric characters.
+                    Since an empty string reads the same forward and backward, it is a palindrome.
+ 
+- Constraints:
+
+    1 <= s.length <= 2 * 10^5
+    s consists only of printable ASCII characters.
+*/
+
+static bool IsPalindrome(string s)
+{
+   List<char> chars = new List<char>();
+   string result = "";
+
+    for (int i = 0; i < s.Length; i++)
+    {
+        if (!char.IsAsciiLetterOrDigit(s[i]))
+            s.Remove(i,1);
+        else
+            result = string.Concat(result, s[i]);
+    }
+
+    var orderedString = result.ToString().ToLower();
+
+    char[] resArray = result.ToCharArray();
+    Array.Reverse(resArray);
+    var reversedString = string.Concat(resArray).ToLower();
+   
+    if (orderedString.SequenceEqual(reversedString))
+        return true;
+    else
+        return false;
+
+}
+
+
+string pal1 = "A man, a plan, a canal: Panama";
+Console.WriteLine("Is Palindrome: " + IsPalindrome(pal1));
+
+string pal2 = "race a car";
+Console.WriteLine("Is Palindrome: " + IsPalindrome(pal2));
+Console.WriteLine();
+#endregion
+
+
+#region 167. Two Sum II - Input Array Is Sorted (Two Pointers)
+/*
+- Given a 1-indexed array of integers (numbers) that is already sorted in non-decreasing order, 
+    find two numbers such that they add up to a specific target number. 
+        Let these two numbers be numbers[index1] and numbers[index2] where (1 <= index1) < (index2 <= numbers.length).
+
+- Return the indices of the two numbers, index1 and index2, 
+    added by one as an integer array [index1, index2] of length 2.
+
+- The tests are generated such that there is exactly one solution. You may not use the same element twice.
+
+- Your solution must use only constant extra space.
+
+- Example 1:
+    Input: numbers = [2,7,11,15], target = 9
+    Output: [1,2]
+    Explanation: The sum of 2 and 7 is 9. Therefore, index1 = 1, index2 = 2. We return [1, 2].
+
+- Example 2:
+    Input: numbers = [2,3,4], target = 6
+    Output: [1,3]
+    Explanation: The sum of 2 and 4 is 6. Therefore index1 = 1, index2 = 3. We return [1, 3].
+
+- Example 3:
+    Input: numbers = [-1,0], target = -1
+    Output: [1,2]
+    Explanation: The sum of -1 and 0 is -1. Therefore index1 = 1, index2 = 2. We return [1, 2].
+ 
+- Constraints:
+    2 <= numbers.length <= 3 * 10^4
+    -1000 <= numbers[i] <= 1000
+    numbers is sorted in non-decreasing order.
+    -1000 <= target <= 1000
+    The tests are generated such that there is exactly one solution.
+ */
+
+static int[] TwoSums(int[] numbers, int target)
+{
+    List<int> results = new List<int>();
+
+    for (int i = 0; i < numbers.Length; i++)
+    {
+        for (int j = i+1; j < numbers.Length; j++)
+        {
+            if (numbers[i] + numbers[j] == target)
+            {
+                results.Add(i+1);
+                results.Add(j+1);
+            }
+            else if (numbers[i] + numbers[j] > target)
+                break;
+        }
+    }
+
+    return results.ToArray();
+}
+
+int[] numArr1 = {2,7,11,15};
+Console.WriteLine("Two Sums: " + TwoSums(numArr1,9)); //[1,2]
+Console.WriteLine();
+
+
+#endregion
+
+
 #region 217. Contains Duplicate (HashTable/Dictionary) 
 /*
 * Given an integer array nums, 
@@ -427,6 +559,65 @@ string w2 = "nagaram";
 Console.WriteLine("Valid Anagram ? : " + IsAnagram(s2,w2)); //false
 Console.WriteLine();
 
+#endregion
+
+
+#region 283. Move Zeroes (Two Pointers)
+/*
+- Given an integer array nums, move all 0's to the end of it while maintaining the relative order of the non-zero elements.
+- Note that you must do this in-place without making a copy of the array.
+
+- Example 1:
+    Input: nums = [0,1,0,3,12]
+    Output: [1,3,12,0,0]
+
+- Example 2:
+    Input: nums = [0]
+    Output: [0]
+ 
+- Constraints:
+    1 <= nums.length <= 104
+    -2^31 <= nums[i] <= 2^31 - 1
+*/
+
+static void MoveZeroes(int[] nums)
+{
+    if (nums.Length < 2) 
+        return;
+
+    int LP = 0;
+    int RP = 1;
+
+    /*
+     {1,  3,  12,  0,  0}
+      ^   ^
+      LP  RP
+    */
+
+    while (RP < nums.Length)
+    {
+        if (nums[LP] != 0)
+        {
+            LP++;
+            RP++;
+        }
+        else if (nums[RP] == 0)
+        {
+            RP++;
+        }
+        else
+        {
+            int temp = nums[RP];
+            nums[RP] = nums[LP];
+            nums[LP] = temp;
+        }
+    }
+}
+
+int[] numbers1 = {0, 1, 0, 3, 12};
+MoveZeroes(numbers1);
+Console.WriteLine("Move Zeroes: " + numbers1); // {1,3,12,0,0}
+Console.WriteLine();
 #endregion
 
 
@@ -704,6 +895,84 @@ int[] inputArray = { -1, 0, 3, 5, 9, 12 };
 Console.WriteLine("Binary Search: " + Search(inputArray, 9)); //4
 Console.WriteLine("Binary Search: " + Search(inputArray, 2)); //-1
 
+#endregion
+
+
+#region 1768. Merge Strings Alternately (Two Pointers) [Not Solved...]
+/*
+- You are given two strings word1 and word2. 
+    Merge the strings by adding letters in alternating order, starting with word1. 
+        If a string is longer than the other, append the additional letters onto the end of the merged string.
+
+- Return the merged string. 
+
+- Example 1:
+    Input: word1 = "abc", word2 = "pqr"
+    Output: "apbqcr"
+    Explanation: The merged string will be merged as so:
+    word1:  a   b   c
+    word2:    p   q   r
+    merged: a p b q c r
+
+- Example 2:
+    Input: word1 = "ab", word2 = "pqrs"
+    Output: "apbqrs"
+    Explanation: Notice that as word2 is longer, "rs" is appended to the end.
+    word1:  a   b 
+    word2:    p   q   r   s
+    merged: a p b q   r   s
+
+- Example 3:
+    Input: word1 = "abcd", word2 = "pq"
+    Output: "apbqcd"
+    Explanation: Notice that as word1 is longer, "cd" is appended to the end.
+    word1:  a   b   c   d
+    word2:    p   q 
+    merged: a p b q c   d
+ 
+- Constraints:
+    1 <= word1.length, word2.length <= 100
+    word1 and word2 consist of lowercase English letters.
+ */
+
+static string MergeAlternately(string word1, string word2)
+{
+    Dictionary<char, int> valuePairs = new Dictionary<char, int>();
+    int countWord1 = 1;
+    int countWord2 = 2;
+    string res = "";
+
+    for (int i = 0; i < word1.Length; i++)
+    {
+        valuePairs.Add(word1[i], countWord1);
+        countWord1 += 2;
+    }
+
+    for (int i = 0; i < word2.Length; i++)
+    {
+        valuePairs.Add(word2[i], countWord2);
+        countWord2 += 2;
+    }
+
+    for (int i = 1; i < valuePairs.Values.Max() + 1; i++)
+    {
+        if (valuePairs.ContainsValue(i))
+            res = string.Concat(res, valuePairs.Keys.FirstOrDefault(key => valuePairs[key] == i));
+        else
+            continue;
+    }
+
+    return res;
+     
+}
+
+string wordEx1 = "ab";
+string wordEx2 = "pqrs";
+Console.WriteLine("Merge Alternately: " + MergeAlternately(wordEx1,wordEx2));
+
+string wordEx3 = "abcd";
+string wordEx4 = "pq";
+Console.WriteLine("Merge Alternately: " + MergeAlternately(wordEx3,wordEx4));
 #endregion
 
 
