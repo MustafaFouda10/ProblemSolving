@@ -297,6 +297,67 @@ static int SearchInsert(int[] nums, int target)
 #endregion
 
 
+#region 121. Best Time to Buy and Sell Stock (Sliding Window) [Not Solved...]
+/*
+- You are given an array , prices, where prices[i] is the price of a given stock on the ith day.
+
+- You want to maximize your profit by choosing a single day to buy one stock
+    and choosing a different day in the future to sell that stock.
+
+- Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
+
+- Example 1:
+    Input: prices = [7,1,5,3,6,4]
+    Output: 5
+    Explanation: Buy on day 2 (price = 1) and sell on day 5 (price = 6), profit = 6-1 = 5.
+    Note that buying on day 2 and selling on day 1 is not allowed because you must buy before you sell.
+
+- Example 2:
+    Input: prices = [7,6,4,3,1]
+    Output: 0
+    Explanation: In this case, no transactions are done and the max profit = 0.
+ 
+- Constraints:
+    1 <= prices.length <= 10^5
+    0 <= prices[i] <= 10^4
+ */
+
+static int MaxProfit(int[] prices)
+{
+    if (prices.Length < 2)
+    {
+        return 0;
+    }
+
+    Dictionary<int,int> minBasket = new Dictionary<int, int>();
+    minBasket.Add(prices[0], 0);
+
+    Stack<int> maxBasket = new Stack<int>();
+
+    for (int i = 1; i < prices.Length; i++)
+    {
+        if (prices[i] < minBasket.Keys.FirstOrDefault())
+        {
+            minBasket.Remove(minBasket.Keys.FirstOrDefault());
+            minBasket.Add(prices[i],i);
+        }
+    }
+
+    for (int i = minBasket.Values.FirstOrDefault()+1; i < prices.Length; i++)
+    {
+
+    }
+
+    return 0;
+}
+
+int[] prices = { 7, 1, 5, 3, 6, 4 };
+Console.WriteLine("Max Profit: " + MaxProfit(prices));
+Console.WriteLine();
+
+#endregion
+
+
 #region 125. Valid Palindrome (Two Pointers)
 /*
 - A phrase is a palindrome if, after converting all uppercase letters into lowercase letters 
@@ -479,7 +540,34 @@ Console.WriteLine();
 #endregion
 
 
-#region 238. Product of Array Except Self [waiting...]
+#region 219. Contains Duplicate II (SlidingWindow)
+
+static bool ContainsNearbyDuplicate(int[] nums, int k)
+{
+
+    for (int i = 0; i < nums.Length; i++)
+    {
+        for (int j = i + 1; j < nums.Length; j++)
+        {
+            if (nums[i] == nums[j] && (Math.Abs(i - j)) <= k)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
+int[] testNums = { 1, 2, 3, 1 };
+int numsK = 3;
+Console.WriteLine("Contains Nearby Duplicate: " + ContainsNearbyDuplicate(testNums, numsK)); //true
+Console.WriteLine();
+#endregion
+
+
+#region 238. Product of Array Except Self [Not Solved...]
 /*
 - Given an integer array nums, return an array answer such that answer[i] 
     is equal to the product of all the elements of nums except nums[i].
@@ -506,11 +594,17 @@ Console.WriteLine();
     (The output array does not count as extra space for space complexity analysis.)
 */
 
-//static int[] ProductExceptSelf(int[] nums)
-//{
+static int[] ProductExceptSelf(int[] nums)
+{
+    int[] soln = new int[nums.Length];
 
-//}
+    return soln;
+}
 
+
+int[] ints = { -1, 1, 0, -3, 3 };
+Console.WriteLine("Product of Array Except Self: " + ProductExceptSelf(ints)); //[0,0,9,0,0]
+Console.WriteLine();
 #endregion
 
 
@@ -589,7 +683,7 @@ static void MoveZeroes(int[] nums)
     int RP = 1;
 
     /*
-     {1,  3,  12,  0,  0}
+     {0,  1,  0,  3,  12}
       ^   ^
       LP  RP
     */
@@ -607,6 +701,7 @@ static void MoveZeroes(int[] nums)
         }
         else
         {
+            //swap...
             int temp = nums[RP];
             nums[RP] = nums[LP];
             nums[LP] = temp;
@@ -691,7 +786,7 @@ Console.WriteLine();
 #endregion
 
 
-#region 392. Is Subsequence [Not Solved]
+#region 392. Is Subsequence [Not Solved...]
 /*
 - Given two strings s and t, return true if s is a subsequence of t, or false otherwise.
 
@@ -830,6 +925,39 @@ Console.WriteLine("Subarray Sum: " + SubarraySum(numb4, 1)); //1
 Console.WriteLine("Subarray Sum: " + SubarraySum(numb5, 6)); //1
 Console.WriteLine("Subarray Sum: " + SubarraySum(numb6, 0)); //3
 Console.WriteLine();
+#endregion
+
+
+#region 682. Baseball Game (Stack)
+static int CalPoints(string[] operations)
+{
+    Stack<int> records = new Stack<int>();
+    int sum = 0;
+
+    for (int i = 0; i < operations.Length; i++)
+    {
+        if (operations[i].ToLower() == "c")
+            records.Pop();
+        else if (operations[i].ToLower() == "d")
+            records.Push(records.Peek() * 2);
+        else if (operations[i].ToLower() == "+")
+            records.Push(records.ElementAt(0) + records.ElementAt(1));
+        else
+            records.Push(int.Parse(operations[i]));
+    }
+
+    foreach (var item in records)
+    {
+        sum += item;
+    }
+
+    return sum;
+}
+
+string[] ops2 = { "5", "-2", "4", "C", "D", "9", "+", "+" };
+Console.WriteLine("CalPoints: " + CalPoints(ops2)); //27
+string[] ops = { "5", "2", "C", "D", "+" };
+Console.WriteLine("CalPoints: " + CalPoints(ops)); //30
 #endregion
 
 
@@ -1139,5 +1267,100 @@ static int NumberOfSpecialCharsII(string word)
 string wo1 = "AbBCab";
 Console.WriteLine("Number Of Special Chars II: " + NumberOfSpecialCharsII(wo1)); //0
 #endregion
+
+
+#region 225. Implement Stack using Queues (Stack)
+/*
+- Implement a last-in-first-out (LIFO) stack using only two queues. 
+    The implemented stack should support all the functions of a normal stack (push, top, pop, and empty).
+
+- Implement the (MyStack) class:
+    [void push(int x)] : Pushes element x to the top of the stack.
+    [int pop()]        : Removes the element on the top of the stack and returns it.
+    [int top()]        : Returns the element on the top of the stack.
+    [boolean           : empty()] Returns true if the stack is empty, false otherwise.
+
+- Notes:
+    You must use only standard operations of a queue, which means that only (push to back),
+        (peek/pop from front), (size) and (is empty) operations are valid.
+    Depending on your language, the queue may not be supported natively. 
+        You may simulate a queue using a list or deque (double-ended queue) 
+            as long as you use only a queue's standard operations.
+ 
+
+- Example 1:
+    Input
+    ["MyStack", "push", "push", "top", "pop", "empty"]
+    [[], [1], [2], [], [], []]
+    Output
+    [null, null, null, 2, 2, false]
+
+** Explanation **
+    MyStack myStack = new MyStack();
+    myStack.push(1);
+    myStack.push(2);
+    myStack.top(); // return 2
+    myStack.pop(); // return 2
+    myStack.empty(); // return False
+ 
+- Constraints:
+    1 <= x <= 9
+    At most 100 calls will be made to push, pop, top, and empty.
+    All the calls to pop and top are valid.
+ */
+MyStack myStack = new MyStack();
+Console.WriteLine("MyStack: " + myStack);
+myStack.Push(50);
+Console.WriteLine("MyStack: " + myStack);
+myStack.Push(25);
+Console.WriteLine("MyStack: " + myStack);
+myStack.Top(); // return 2
+Console.WriteLine("MyStack: " + myStack);
+myStack.Pop(); // return 2
+Console.WriteLine("MyStack: " + myStack);
+myStack.Empty(); // return False
+Console.WriteLine("MyStack: " + myStack);
+
+
+
+public class MyStack
+{
+    public List<int> Stack = new List<int>();
+
+    public MyStack()
+    {
+
+    }
+
+    public void Push(int x)
+    {
+        Stack.Add(x);
+    }
+
+    public int Pop()
+    {
+        var elementPoped = Top();
+        if (Stack.Count < 1)
+            return 0;
+
+        Stack.RemoveAt(Stack.Count - 1);
+        return elementPoped;
+    }
+
+    public int Top()
+    {
+        return Stack.LastOrDefault();
+    }
+
+    public bool Empty()
+    {
+        if (Stack.Count > 0)
+            return false;
+
+        return true;
+    }
+}
+#endregion
+
 
 
